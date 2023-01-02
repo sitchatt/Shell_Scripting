@@ -28,7 +28,7 @@ echo "$LASTLOGIN \n\n"
 echo "----------------------------------- \n"
 echo "$(hostname) is UP for :"
 
-echo "$UP hr"
+echo "$UP"
 
 echo "currently connected:"
 
