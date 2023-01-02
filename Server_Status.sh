@@ -11,7 +11,7 @@ echo "------------------------------\n"
 CTDATE=$(date | awk '{print $1, $2, $3}')
 CTTIME=$(date | awk '{print $4}')
 CTTIMEZONE=$(date | awk '{print $5}')
-UP=$(uptime | xargs | awk '{print $1}')
+UP=$(uptime | xargs | awk '{print $3,$4}')
 CD=$(uptime | xargs | awk '{print $5,$6}')
 LASTLOGIN=$(last -a | head -3)
 DISK=$(df -h | xargs | awk '{print   $11 " / " $9}')
