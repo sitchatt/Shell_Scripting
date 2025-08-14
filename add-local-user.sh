@@ -1,37 +1,37 @@
 #!/bin/bash
 
-## Check User is Root or not
-
-if [[ ${UID} != 0 ]]; then
+# ----- Root Check -----
+if [[ $EUID -ne 0 ]]; then
     echo "Unauthorized !! Not a ROOT user. Exiting the Script"
     exit 1
 fi
 
-# Prompt to enter user details
-read -p 'Please Enter Your Name: ' NAME
-read -p 'Please Enter UserName: ' USERNAME
-read -p 'Please Enter Initial Password: ' PASSWORD
+# ----- User Details -----
+read -p 'Please Enter Full Name: ' NAME
+read -p 'Please Enter Username: ' USERNAME
+read -s -p 'Please Enter Initial Password: ' PASSWORD
+echo
 
-# User Creation
-useradd -c "${NAME}" -m "${USERNAME}"
-
+# ----- Create User with Bash shell -----
+useradd -c "$NAME" -m -s /bin/bash "$USERNAME"
 if [[ $? -ne 0 ]]; then
     echo "Unable to add user for ${USERNAME}. Exiting Script"
     exit 1
-else
-    echo "User is added. Creating Password....."
 fi
 
-# Create Password and Expire it to force user to change password on next login
-echo "${USERNAME}:${PASSWORD}" | sudo chpasswd
-passwd -e "${USERNAME}"
+# ----- Set Password -----
+echo "${USERNAME}:${PASSWORD}" | chpasswd
 
-if [[ $? -ne 0 ]]; then
-    echo "Unable to create password. Exiting Script"
-    exit 1
-fi
+# ----- Unlock and Expire Password for First Login -----
+passwd -u "$USERNAME" 2>/dev/null || true
+passwd -de "$USERNAME"  # Ubuntu-friendly way to force password change
 
+# ----- Output -----
+echo "--------------------------------------"
 echo "Successfully Created User"
-echo "User Name: ${USERNAME}"
+echo "User Name      : ${USERNAME}"
+echo "Full Name      : ${NAME}"
 echo "Initial Password: ${PASSWORD}"
-echo "Hostname is: $HOSTNAME"
+echo "Hostname       : $HOSTNAME"
+echo "--------------------------------------"
+echo "User will be prompted to change password on first login."
